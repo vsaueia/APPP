@@ -1,4 +1,4 @@
-package appp;
+package appp.cap5;
 
 import org.junit.Test;
 

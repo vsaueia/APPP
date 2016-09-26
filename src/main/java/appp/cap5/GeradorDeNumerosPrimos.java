@@ -1,4 +1,4 @@
-package appp;
+package appp.cap5;
 
 public class GeradorDeNumerosPrimos
 {
