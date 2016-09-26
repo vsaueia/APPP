@@ -2,59 +2,66 @@ package appp;
 
 public class GeradorDeNumerosPrimos
 {
+    private static boolean[] naoPrimos;
+    private static int[] resultado;
 
-    private static boolean[] crossedOut;
-
-    public static int[] gerar(int valorMaximo) {
-        if(valorMaximo >= 2) {
+    public static int[] gerarNumerosPrimeirosAte(int valorMaximo) {
+        if (valorMaximo < 2) {
             return new int[0];
         } else {
-            int s = valorMaximo + 1;
-
-            DesmarcarInteirosAteValor(s);
-            DesmarcarMultiplos(s);
-
-            int quantidadeDeNumerosPrimos = 0;
-            for (int i = 0; i < s; i++) {
-                if (crossedOut[i]) {
-                    quantidadeDeNumerosPrimos++;
-                }
-            }
-
-            int[] primos = new int[quantidadeDeNumerosPrimos];
-            for (int i = 0, j = 0; i < s; i++) {
-                if (crossedOut[i]) {
-                    primos[j++] = i;
-                }
-            }
-            return primos;
+            desmarcarNumerosAte(valorMaximo);
+            desmarcarMultiplosDePrimos();
+            inserirNumerosEncontradosNoResultado();
+            return resultado;
         }
     }
 
-    private static void DesmarcarMultiplos(int s) {
-        crossedOut[0] = crossedOut[1] = false;
-
-        for (int i = 2; i < Math.sqrt(s) + 1; i++) {
-			if (crossedOut[i]) {
-				for (int j = 2 * i; j < s; j+=i) {
-					crossedOut[j] = false;
-				}
-			}
-		}
+    private static void inserirNumerosEncontradosNoResultado() {
+        resultado = new int[quantidadeDeNumerosPrimosEncontrados()];
+        for(int j = 0, i = 2; i < naoPrimos.length; i++) {
+            if (marcadoComoPrimo(i)) {
+                resultado[j++] = i;
+            }
+        }
     }
 
-    private static void DesmarcarInteirosAteValor(int maximo) {
-        crossedOut = new boolean[maximo + 1];
-        for (int i = 2; i < crossedOut.length; i++) {
-			crossedOut[i] = false;
-		}
+    private static int quantidadeDeNumerosPrimosEncontrados() {
+        int quantidade = 0;
+        for(int i = 2; i < naoPrimos.length; i++) {
+            if (marcadoComoPrimo(i)) {
+                quantidade++;
+            }
+        }
+        return quantidade;
     }
 
-    public static void main( String[] args )
-    {
-        int[] gerar = GeradorDeNumerosPrimos.gerar(1000000000);
-        for(int i = 0; i < gerar.length; i++) {
-            System.out.printf("%d > %d\n",i,gerar[i]);
+    private static void desmarcarMultiplosDePrimos() {
+        int limite = determinarLimiteDaIteracao();
+        for(int i = 2; i <= limite; i++) {
+            if (marcadoComoPrimo(i)) {
+                desmarcarMultiplosDe(i);
+            }
+        }
+    }
+
+    private static void desmarcarMultiplosDe(int i) {
+        for(int multiplo = 2 * i; multiplo < naoPrimos.length; multiplo += i) {
+            naoPrimos[multiplo] = true;
+        }
+    }
+
+    private static boolean marcadoComoPrimo(int i) {
+        return naoPrimos[i] == false;
+    }
+
+    private static int determinarLimiteDaIteracao() {
+        return (int) Math.sqrt(naoPrimos.length);
+    }
+
+    private static void desmarcarNumerosAte(int valorMaximo) {
+        naoPrimos = new boolean[valorMaximo + 1];
+        for(int i = 2; i < naoPrimos.length; i++) {
+            naoPrimos[i] = false;
         }
     }
 }
